@@ -1,621 +1,300 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scrimclub - Automated Esports Scrim Matchmaking</title>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-    <!-- FontAwesome Icons -->
+    <title>Scrimclub - Ultimate Matchmaking, Scrim & Top-Up Esports Platform</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+    <!-- Google Fonts Inter & Orbitron -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@600;800;900&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        dark: {
+                            base: '#0B0E14',
+                            card: '#131822',
+                            hover: '#1B2232',
+                            border: '#2A3447'
+                        },
+                        neon: {
+                            cyan: '#00F0FF',
+                            purple: '#7000FF',
+                            pink: '#FF007A',
+                            green: '#00FF66',
+                            yellow: '#FFB800'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Orbitron', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'neon-cyan': '0 0 15px rgba(0, 240, 255, 0.4)',
+                        'neon-purple': '0 0 15px rgba(112, 0, 255, 0.4)',
+                        'neon-pink': '0 0 15px rgba(255, 0, 122, 0.4)',
+                        'neon-green': '0 0 15px rgba(0, 255, 102, 0.4)'
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        /* RESET & BASE STYLES */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
-
         body {
-            background-color: #0b0e14;
-            color: #e2e8f0;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            background-color: #0B0E14;
+            color: #F3F4F6;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
         }
-
-        h1, h2, h3, .brand-text {
-            font-family: 'Rajdhani', sans-serif;
+        .font-display {
+            font-family: 'Orbitron', sans-serif;
         }
-
-        /* HEADER & NAVBAR */
-        header {
-            background-color: rgba(21, 26, 35, 0.95);
-            border-bottom: 1px solid #232a36;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            backdrop-filter: blur(8px);
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 16px;
-            height: 64px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        ::-webkit-scrollbar-track {
+            background: #0B0E14;
         }
-
-        .logo-box {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-        }
-
-        .logo-icon {
-            width: 38px;
-            height: 38px;
-            background: linear-gradient(135deg, #00f0ff, #7000ff);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            color: #000;
-            font-size: 20px;
-        }
-
-        .logo-title {
-            font-size: 22px;
-            font-weight: 700;
-            letter-spacing: 1px;
-            color: #fff;
-        }
-
-        .logo-title span {
-            color: #00f0ff;
-        }
-
-        /* NAVIGATION LINKS */
-        .desktop-nav {
-            display: none;
-            gap: 20px;
-        }
-
-        @media (min-width: 768px) {
-            .desktop-nav { display: flex; }
-            .mobile-btn { display: none !important; }
-        }
-
-        .nav-link {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px 12px;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .nav-link.active, .nav-link:hover {
-            color: #00f0ff;
-            background-color: rgba(0, 240, 255, 0.05);
-        }
-
-        /* HEADER RIGHT ACTIONS */
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .icon-btn {
-            width: 38px;
-            height: 38px;
-            background-color: #0b0e14;
-            border: 1px solid #232a36;
-            border-radius: 8px;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .icon-btn:hover {
-            color: #fff;
-            border-color: #00f0ff;
-        }
-
-        .badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background-color: #ff007a;
-            color: #fff;
-            font-size: 10px;
-            font-weight: bold;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .avatar-img {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            object-fit: cover;
-            border: 1px solid #00f0ff;
-            cursor: pointer;
-        }
-
-        /* MOBILE MENU DRAWER */
-        .mobile-drawer {
-            display: none;
-            background-color: #151a23;
-            border-bottom: 1px solid #232a36;
-            padding: 12px 16px;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .mobile-drawer.open {
-            display: flex;
-        }
-
-        .mobile-drawer .nav-link {
-            width: 100%;
-            padding: 12px;
-            background-color: #0b0e14;
-        }
-
-        /* MAIN LAYOUT */
-        main {
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px 16px;
-            flex: 1;
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* CARDS & CONTAINERS */
-        .card {
-            background-color: #151a23;
-            border: 1px solid #232a36;
-            border-radius: 16px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-
-        .hero-card {
-            background: linear-gradient(135deg, #151a23 0%, #1e1035 100%);
-            border: 1px solid rgba(112, 0, 255, 0.4);
-            position: relative;
-        }
-
-        .tag-pill {
-            display: inline-block;
-            background-color: rgba(0, 240, 255, 0.1);
-            border: 1px solid rgba(0, 240, 255, 0.3);
-            color: #00f0ff;
-            font-size: 11px;
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 20px;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-        }
-
-        .hero-title {
-            font-size: 28px;
-            line-height: 1.2;
-            font-weight: 700;
-            color: #fff;
-            margin-bottom: 10px;
-        }
-
-        @media (min-width: 768px) {
-            .hero-title { font-size: 38px; }
-        }
-
-        .hero-desc {
-            color: #94a3b8;
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 20px;
-        }
-
-        /* BUTTONS */
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 700;
-            font-size: 13px;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: transform 0.1s, opacity 0.2s;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        .btn-primary {
-            background-color: #00f0ff;
-            color: #000;
-        }
-
-        .btn-primary:hover {
-            background-color: #33f3ff;
-        }
-
-        .btn-secondary {
-            background-color: #0b0e14;
-            color: #fff;
-            border: 1px solid #232a36;
-        }
-
-        .btn-secondary:hover {
-            border-color: #00f0ff;
-        }
-
-        /* GAME FILTERS */
-        .filter-bar {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            margin-bottom: 20px;
-        }
-
-        .filter-btn {
-            background-color: #151a23;
-            border: 1px solid #232a36;
-            color: #94a3b8;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 12px;
-            font-weight: 600;
-            white-space: nowrap;
-            cursor: pointer;
-        }
-
-        .filter-btn.active {
-            background-color: #00f0ff;
-            color: #000;
-            border-color: #00f0ff;
-            font-weight: bold;
-        }
-
-        /* GRID LOBBY */
-        .grid-cards {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 16px;
-        }
-
-        @media (min-width: 768px) {
-            .grid-cards { grid-template-columns: repeat(2, 1fr); }
-        }
-
-        @media (min-width: 1024px) {
-            .grid-cards { grid-template-columns: repeat(3, 1fr); }
-        }
-
-        .lobby-card {
-            background-color: #151a23;
-            border: 1px solid #232a36;
-            border-radius: 12px;
-            padding: 16px;
-        }
-
-        .lobby-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-
-        .lobby-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            margin-top: 4px;
-        }
-
-        .status-badge {
-            background-color: rgba(34, 197, 94, 0.1);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            font-size: 10px;
-            font-weight: bold;
-            padding: 3px 8px;
+        ::-webkit-scrollbar-thumb {
+            background: #2A3447;
             border-radius: 4px;
         }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            color: #94a3b8;
-            margin-bottom: 6px;
+        ::-webkit-scrollbar-thumb:hover {
+            background: #00F0FF;
         }
-
-        .info-row span:last-child {
-            color: #fff;
-            font-weight: 600;
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(19, 24, 34, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
-
-        .btn-full {
-            width: 100%;
-            justify-content: center;
-            margin-top: 12px;
+        .cyber-grid {
+            background-size: 40px 40px;
+            background-image: 
+                linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
         }
-
-        /* TABLES */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-            font-size: 13px;
-        }
-
-        th {
-            background-color: #0b0e14;
-            color: #94a3b8;
-            padding: 12px;
-            border-bottom: 1px solid #232a36;
-            text-transform: uppercase;
-            font-size: 11px;
-        }
-
-        td {
-            padding: 12px;
-            border-bottom: 1px solid #232a36;
-        }
-
-        /* NOTIFICATION DROPDOWN */
-        .notif-menu {
-            display: none;
-            position: absolute;
-            top: 48px;
-            right: 0;
-            width: 280px;
-            background-color: #151a23;
-            border: 1px solid #232a36;
-            border-radius: 12px;
-            padding: 12px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-            z-index: 100;
-        }
-
-        .notif-menu.open { display: block; }
-
-        /* FOOTER */
-        footer {
-            border-top: 1px solid #232a36;
-            background-color: #151a23;
-            text-align: center;
-            padding: 20px;
-            font-size: 12px;
-            color: #94a3b8;
-            margin-top: 40px;
+        .text-gradient-cyan {
+            background: linear-gradient(135deg, #00F0FF 0%, #7000FF 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
-<body>
+<body class="cyber-grid min-h-screen flex flex-col justify-between selection:bg-neon-cyan selection:text-black">
 
-    <!-- NAVBAR HEADER -->
-    <header>
-        <div class="nav-container">
-            <!-- LOGO -->
-            <div class="logo-box" onclick="switchTab('lobby')">
-                <div class="logo-icon">S</div>
-                <div class="logo-title">SCRIM<span>CLUB</span></div>
+    <!-- Dynamic Toast Notification Container -->
+    <div id="toastContainer" class="fixed top-24 right-5 z-50 flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- MAIN NAVBAR -->
+    <header class="sticky top-0 z-40 glass-panel border-b border-dark-border">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+            
+            <!-- Brand Logo -->
+            <div class="flex items-center gap-3 cursor-pointer shrink-0" onclick="switchTab('lobby')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center text-black font-black text-xl shadow-neon-cyan">
+                    S
+                </div>
+                <div>
+                    <span class="font-display text-xl sm:text-2xl font-black tracking-wider text-white">SCRIM<span class="text-neon-cyan">CLUB</span></span>
+                    <span class="hidden sm:inline-block text-[10px] uppercase font-semibold text-neon-purple tracking-widest px-2 py-0.5 rounded bg-neon-purple/10 border border-neon-purple/30 ml-2">ULTIMATE</span>
+                </div>
             </div>
 
-            <!-- DESKTOP NAV -->
-            <nav class="desktop-nav">
-                <button onclick="switchTab('lobby')" id="nav-lobby" class="nav-link active">
-                    <i class="fa-solid fa-gamepad"></i> Lobi Scrim
+            <!-- Full Navigation Menu Links (All 6 Tabs) -->
+            <nav class="hidden lg:flex items-center gap-1 bg-dark-base/80 p-1.5 rounded-2xl border border-dark-border">
+                <button onclick="switchTab('lobby')" id="nav-lobby" class="nav-btn active flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-medium text-xs transition-all duration-200">
+                    <i class="fa-solid fa-gamepad text-neon-cyan"></i> Lobi Scrim
                 </button>
-                <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="nav-link">
-                    <i class="fa-solid fa-trophy"></i> Leaderboard
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-medium text-xs text-gray-400 hover:text-white transition-all duration-200">
+                    <i class="fa-solid fa-gauge-high text-neon-green"></i> Dashboard
                 </button>
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-link">
-                    <i class="fa-solid fa-chart-line"></i> Dashboard
+                <button onclick="switchTab('store')" id="nav-store" class="nav-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-medium text-xs text-gray-400 hover:text-white transition-all duration-200">
+                    <i class="fa-solid fa-store text-neon-pink"></i> Top-Up & Rewards
                 </button>
-                <button onclick="switchTab('store')" id="nav-store" class="nav-link">
-                    <i class="fa-solid fa-store"></i> Top-Up Store
+                <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="nav-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-medium text-xs text-gray-400 hover:text-white transition-all duration-200">
+                    <i class="fa-solid fa-trophy text-neon-yellow"></i> Leaderboard
                 </button>
-                <button onclick="switchTab('lft')" id="nav-lft" class="nav-link">
-                    <i class="fa-solid fa-users"></i> LFT Hub
+                <button onclick="switchTab('lft')" id="nav-lft" class="nav-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-medium text-xs text-gray-400 hover:text-white transition-all duration-200">
+                    <i class="fa-solid fa-users-viewfinder text-orange-400"></i> Cari Tim (LFT)
+                </button>
+                <button onclick="switchTab('profile')" id="nav-profile" class="nav-btn flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-medium text-xs text-gray-400 hover:text-white transition-all duration-200">
+                    <i class="fa-solid fa-user-gear text-neon-purple"></i> Profile User
                 </button>
             </nav>
 
-            <!-- RIGHT ACTIONS -->
-            <div class="header-actions">
-                <div class="icon-btn" onclick="toggleNotif()">
-                    <i class="fa-solid fa-bell"></i>
-                    <span class="badge" id="notif-badge">2</span>
+            <!-- User Balance, Notification Center & Quick Profile -->
+            <div class="flex items-center gap-3">
+                
+                <!-- Scrim Points Badge -->
+                <div class="hidden sm:flex items-center gap-1.5 bg-dark-card border border-dark-border px-3 py-1.5 rounded-full text-xs font-semibold">
+                    <i class="fa-solid fa-coins text-neon-yellow"></i>
+                    <span id="userPoints" class="text-neon-cyan font-bold">2,450</span> <span class="text-gray-400">PTS</span>
+                </div>
 
-                    <!-- DROPDOWN NOTIF -->
-                    <div class="notif-menu" id="notif-menu">
-                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold; font-size:12px;">
-                            <span>Notifikasi</span>
-                            <span style="color:#00f0ff; cursor:pointer;" onclick="clearNotif()">Bersihkan</span>
+                <!-- NOTIFICATION BELL ICON WITH DROPDOWN -->
+                <div class="relative">
+                    <button onclick="toggleNotificationCenter()" class="relative p-2.5 rounded-xl bg-dark-card border border-dark-border hover:border-neon-cyan transition-all text-gray-300 hover:text-white">
+                        <i class="fa-solid fa-bell text-lg"></i>
+                        <span id="notifBadge" class="absolute -top-1 -right-1 w-5 h-5 bg-neon-pink text-black text-[10px] font-black rounded-full flex items-center justify-center border-2 border-dark-base shadow-neon-pink">
+                            3
+                        </span>
+                    </button>
+
+                    <!-- NOTIFICATION DROPDOWN CONTAINER -->
+                    <div id="notifDropdown" class="hidden absolute right-0 mt-3 w-80 sm:w-96 glass-panel rounded-2xl border border-dark-border shadow-2xl z-50 overflow-hidden">
+                        <div class="p-4 border-b border-dark-border flex items-center justify-between">
+                            <h4 class="font-bold text-white text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-bell text-neon-cyan"></i> Notifikasi Hub
+                            </h4>
+                            <button onclick="markAllNotificationsRead()" class="text-[11px] text-neon-cyan hover:underline">
+                                Tandai Dibaca
+                            </button>
                         </div>
-                        <div id="notif-list" style="font-size:11px; color:#94a3b8;">
-                            <div style="background:#0b0e14; padding:8px; border-radius:6px; margin-bottom:6px;">
-                                <strong style="color:#fff;">Match Disetujui!</strong><br>
-                                EVOS Esports menerima tantangan MLBB 19:30.
-                            </div>
+                        <div id="notifList" class="max-h-80 overflow-y-auto divide-y divide-dark-border/50">
+                            <!-- Populated Dynamically -->
+                        </div>
+                        <div class="p-2.5 bg-dark-base text-center border-t border-dark-border">
+                            <span class="text-[11px] text-gray-400">Pemberitahuan Matchmaking & System Realtime</span>
                         </div>
                     </div>
                 </div>
 
-                <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&auto=format&fit=crop&q=60" class="avatar-img" onclick="switchTab('profile')" alt="User Avatar">
+                <!-- USER AVATAR & DROPDOWN -->
+                <div class="relative">
+                    <button onclick="toggleUserDropdown()" class="flex items-center gap-2 p-1 rounded-full bg-dark-card border border-dark-border hover:border-neon-cyan transition-all">
+                        <div class="w-9 h-9 rounded-full bg-gradient-to-tr from-neon-cyan to-neon-purple p-0.5 shadow-neon-cyan relative">
+                            <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80" alt="Avatar" class="w-full h-full object-cover rounded-full">
+                            <span class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-neon-green border border-dark-base rounded-full"></span>
+                        </div>
+                    </button>
 
-                <button class="icon-btn mobile-btn" onclick="toggleMobileMenu()">
-                    <i class="fa-solid fa-bars"></i>
+                    <div id="userDropdown" class="hidden absolute right-0 mt-3 w-56 glass-panel rounded-2xl border border-dark-border shadow-2xl z-50 p-2">
+                        <div class="p-3 border-b border-dark-border mb-1">
+                            <h5 class="text-xs font-bold text-white">Xavier 'Viper'</h5>
+                            <span class="text-[10px] text-neon-cyan font-semibold block">Kapten • EVOS Reborn</span>
+                        </div>
+                        <button onclick="switchTab('profile'); toggleUserDropdown();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-dark-hover text-xs text-gray-300 hover:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-user-gear text-neon-purple w-4"></i> Profile User
+                        </button>
+                        <button onclick="switchTab('dashboard'); toggleUserDropdown();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-dark-hover text-xs text-gray-300 hover:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-gauge-high text-neon-green w-4"></i> Scrim Dashboard
+                        </button>
+                        <button onclick="switchTab('store'); toggleUserDropdown();" class="w-full text-left px-3 py-2 rounded-xl hover:bg-dark-hover text-xs text-gray-300 hover:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-store text-neon-pink w-4"></i> Top-Up & Rewards
+                        </button>
+                        <div class="border-t border-dark-border my-1"></div>
+                        <button onclick="showToast('Berhasil keluar dari sesi.', 'info')" class="w-full text-left px-3 py-2 rounded-xl hover:bg-red-500/20 text-xs text-red-400 flex items-center gap-2">
+                            <i class="fa-solid fa-right-from-bracket w-4"></i> Logout
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mobile Navigation Menu Toggle Button -->
+                <button onclick="toggleMobileMenu()" class="lg:hidden text-gray-300 hover:text-white text-2xl p-1">
+                    <i class="fa-solid fa-bars-staggered"></i>
                 </button>
             </div>
         </div>
 
-        <!-- MOBILE DRAWER -->
-        <div class="mobile-drawer" id="mobile-drawer">
-            <button onclick="switchTab('lobby'); toggleMobileMenu()" class="nav-link active">
-                <i class="fa-solid fa-gamepad"></i> Lobi Scrim
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobileMenu" class="hidden lg:hidden glass-panel border-t border-dark-border px-4 pt-3 pb-6 space-y-2">
+            <div class="flex items-center justify-between pb-3 border-b border-dark-border mb-2">
+                <div class="flex items-center gap-2 text-xs font-semibold">
+                    <i class="fa-solid fa-coins text-neon-yellow"></i>
+                    <span>Scrim Points: <strong class="text-neon-cyan">2,450 PTS</strong></span>
+                </div>
+                <span class="text-[10px] bg-neon-green/20 text-neon-green px-2 py-0.5 rounded border border-neon-green/30">Fair-Play 98</span>
+            </div>
+            <button onclick="switchTab('lobby'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-dark-card hover:bg-dark-hover text-left text-xs font-medium">
+                <i class="fa-solid fa-gamepad text-neon-cyan w-4"></i> Lobi Scrim
             </button>
-            <button onclick="switchTab('leaderboard'); toggleMobileMenu()" class="nav-link">
-                <i class="fa-solid fa-trophy"></i> Leaderboard
+            <button onclick="switchTab('dashboard'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-dark-card hover:bg-dark-hover text-left text-xs font-medium">
+                <i class="fa-solid fa-gauge-high text-neon-green w-4"></i> Scrim Dashboard
             </button>
-            <button onclick="switchTab('dashboard'); toggleMobileMenu()" class="nav-link">
-                <i class="fa-solid fa-chart-line"></i> Dashboard Scrim
+            <button onclick="switchTab('store'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-dark-card hover:bg-dark-hover text-left text-xs font-medium">
+                <i class="fa-solid fa-store text-neon-pink w-4"></i> Top-Up & Rewards
             </button>
-            <button onclick="switchTab('store'); toggleMobileMenu()" class="nav-link">
-                <i class="fa-solid fa-store"></i> Top-Up Store
+            <button onclick="switchTab('leaderboard'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-dark-card hover:bg-dark-hover text-left text-xs font-medium">
+                <i class="fa-solid fa-trophy text-neon-yellow w-4"></i> Leaderboard
             </button>
-            <button onclick="switchTab('lft'); toggleMobileMenu()" class="nav-link">
-                <i class="fa-solid fa-users"></i> LFT Hub
+            <button onclick="switchTab('lft'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-dark-card hover:bg-dark-hover text-left text-xs font-medium">
+                <i class="fa-solid fa-users-viewfinder text-orange-400 w-4"></i> Cari Tim (LFT)
             </button>
-            <button onclick="switchTab('profile'); toggleMobileMenu()" class="nav-link">
-                <i class="fa-solid fa-user"></i> Profil Saya
+            <button onclick="switchTab('profile'); toggleMobileMenu();" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl bg-dark-card hover:bg-dark-hover text-left text-xs font-medium">
+                <i class="fa-solid fa-user-gear text-neon-purple w-4"></i> Profile User
             </button>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main>
-        <!-- TAB 1: LOBI SCRIM -->
-        <section id="tab-lobby" class="tab-content active">
-            <div class="card hero-card">
-                <span class="tag-pill">AUTOMATED MATCHMAKING SYSTEM</span>
-                <h1 class="hero-title">LOBI SCRIM SOLUSI PARING ESPORTS</h1>
-                <p class="hero-desc">Daftar tim, cari lawan tanpa jam karet, kumpulkan Poin Keaktifan, dan dapatkan Reward Komunitas setiap minggu!</p>
-                
-                <div class="btn-group">
-                    <button class="btn btn-primary" onclick="alert('Mencari Quick Match...')">
-                        <i class="fa-solid fa-bolt"></i> Quick Matchmaking
-                    </button>
-                    <button class="btn btn-secondary" onclick="alert('Form Buat Room Dibuka!')">
-                        <i class="fa-solid fa-plus"></i> Buat Room Scrim
-                    </button>
+    <!-- MAIN BODY CONTAINER -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+
+        <!-- TAB 1: SCRIM LOBBY -->
+        <section id="tab-lobby-content" class="tab-content space-y-6">
+            <div class="relative rounded-3xl overflow-hidden border border-dark-border bg-gradient-to-r from-dark-card via-dark-card/90 to-neon-purple/20 p-6 sm:p-10">
+                <div class="relative z-10 max-w-2xl">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-neon-cyan/10 border border-neon-cyan/30 text-neon-cyan text-xs font-semibold mb-4">
+                        <i class="fa-solid fa-bolt animate-pulse"></i> Matchmaking System Otomatis & Anti AFK
+                    </div>
+                    <h1 class="font-display text-2xl sm:text-4xl font-black tracking-tight leading-tight text-white mb-3">
+                        LOBI SCRIM <span class="text-gradient-cyan">SOLUSI PARING ESPORTS</span>
+                    </h1>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed mb-6">
+                        Daftar tim, cari lawan tanpa jam karet, kumpulkan Poin Keaktifan, dan dapatkan Reward Komunitas setiap minggu!
+                    </p>
+                    <div class="flex flex-wrap items-center gap-3">
+                        <button onclick="openModal('createScrimModal')" class="bg-gradient-to-r from-neon-cyan to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-black font-bold px-5 py-3 rounded-xl shadow-neon-cyan transition-all flex items-center gap-2 text-xs uppercase tracking-wider">
+                            <i class="fa-solid fa-plus-circle text-base"></i> Buat Room Scrim
+                        </button>
+                        <button onclick="startQuickMatch()" class="glass-panel hover:bg-dark-hover text-white font-semibold px-5 py-3 rounded-xl border border-dark-border transition-all flex items-center gap-2 text-xs">
+                            <i class="fa-solid fa-bolt text-neon-yellow"></i> Quick Matchmaking
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            <!-- GAME FILTER -->
-            <div class="filter-bar">
-                <button class="filter-btn active">Semua Game</button>
-                <button class="filter-btn">Mobile Legends</button>
-                <button class="filter-btn">PUBG Mobile</button>
-                <button class="filter-btn">Valorant</button>
-                <button class="filter-btn">Free Fire</button>
+            <!-- Filters -->
+            <div class="glass-panel p-5 rounded-2xl border border-dark-border space-y-4">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                    <h2 class="font-display text-base font-bold text-white flex items-center gap-2">
+                        <i class="fa-solid fa-list-check text-neon-cyan"></i> Room Scrim Terbuka
+                    </h2>
+
+                    <div class="flex flex-wrap items-center gap-2">
+                        <button onclick="filterGame('all', this)" class="game-filter-btn active bg-neon-cyan text-black font-bold px-3.5 py-1.5 rounded-xl text-xs transition-all">Semua Game</button>
+                        <button onclick="filterGame('MLBB', this)" class="game-filter-btn bg-dark-card hover:bg-dark-hover border border-dark-border text-gray-300 font-medium px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-mobile-screen text-neon-yellow"></i> MLBB
+                        </button>
+                        <button onclick="filterGame('PUBGM', this)" class="game-filter-btn bg-dark-card hover:bg-dark-hover border border-dark-border text-gray-300 font-medium px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-crosshairs text-neon-pink"></i> PUBGM
+                        </button>
+                        <button onclick="filterGame('Valorant', this)" class="game-filter-btn bg-dark-card hover:bg-dark-hover border border-dark-border text-gray-300 font-medium px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-gun text-neon-cyan"></i> Valorant
+                        </button>
+                        <button onclick="filterGame('FreeFire', this)" class="game-filter-btn bg-dark-card hover:bg-dark-hover border border-dark-border text-gray-300 font-medium px-3.5 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5">
+                            <i class="fa-solid fa-fire text-orange-500"></i> Free Fire
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            <!-- CARDS GRID -->
-            <div class="grid-cards">
-                <!-- CARD 1 -->
-                <div class="lobby-card">
-                    <div class="lobby-header">
-                        <div>
-                            <span class="tag-pill" style="margin:0;">MLBB - 5v5</span>
-                            <div class="lobby-title">RRQ Academy Tryout</div>
-                        </div>
-                        <span class="status-badge">Open Slot</span>
-                    </div>
-                    <div style="margin-top: 12px;">
-                        <div class="info-row"><span>Tier Rata-rata:</span><span>Mythic Immortal</span></div>
-                        <div class="info-row"><span>Format Match:</span><span>BO3 (Best of 3)</span></div>
-                        <div class="info-row"><span>Waktu Tanding:</span><span>Hari Ini, 19:30 WIB</span></div>
-                    </div>
-                    <button class="btn btn-primary btn-full" onclick="alert('Tantangan berhasil dikirim!')">
-                        Tantang Match
-                    </button>
-                </div>
-
-                <!-- CARD 2 -->
-                <div class="lobby-card">
-                    <div class="lobby-header">
-                        <div>
-                            <span class="tag-pill" style="margin:0; color:#7000ff; border-color:#7000ff;">Valorant 5v5</span>
-                            <div class="lobby-title">Aero Esports Practice</div>
-                        </div>
-                        <span class="status-badge">Open Slot</span>
-                    </div>
-                    <div style="margin-top: 12px;">
-                        <div class="info-row"><span>Tier Rata-rata:</span><span>Ascendant - Immortal</span></div>
-                        <div class="info-row"><span>Format Match:</span><span>BO1 Standard</span></div>
-                        <div class="info-row"><span>Waktu Tanding:</span><span>Hari Ini, 20:00 WIB</span></div>
-                    </div>
-                    <button class="btn btn-secondary btn-full" onclick="alert('Tantangan dikirim!')">
-                        Tantang Match
-                    </button>
-                </div>
+            <!-- Scrim Grid -->
+            <div id="scrimsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Injected via JS -->
             </div>
         </section>
 
-        <!-- TAB 2: LEADERBOARD -->
-        <section id="tab-leaderboard" class="tab-content">
-            <div class="card">
-                <h2>LEADERBOARD KEAKTIFAN TIM</h2>
-                <p style="color:#94a3b8; font-size:13px; margin-top:4px; margin-bottom:16px;">
-                    Tim teratas dengan Fair-Play tinggi berhak mendapatkan Community Rewards!
-                </p>
-
-                <div class="table-responsive">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Rank</th>
-                                <th>Nama Tim</th>
-                                <th>Game</th>
-                                <th>Poin Keaktifan</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="color:#facc15; font-weight:bold;">#1</td>
-                                <td style="font-weight:bold; color:#fff;">ALPHA ONE ESPORTS</td>
-                                <td>Mobile Legends</td>
-                                <td style="color:#00f0ff; font-weight:bold;">4,850 Pts</td>
-                            </tr>
-                            <tr>
-                                <td style="color:#cbd5e1; font-weight:bold;">#2</td>
-                                <td style="font-weight:bold; color:#fff;">NOVA PRIME</
+        <!-- TAB 2: SCRIM DASHBOARD -->
+        <section id="tab-dashboard-content" class="tab-content hidden space-y-6">
+            <div class="glass-panel p-6 rounded-3xl border border-dark-border flex flex-col md:flex-row md:items-center justify-between gap-6">
+                <div class="flex items-center gap-4">
+                    <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr
