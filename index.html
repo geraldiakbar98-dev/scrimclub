@@ -4,189 +4,587 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scrimclub - Automated Esports Scrim Matchmaking</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <!-- FontAwesome CDN -->
-    <link rel="stylesheet" href="[https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css](https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css)">
     <!-- Google Fonts -->
-    <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Rajdhani:wght@500;600;700&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Rajdhani:wght@500;600;700&display=swap)" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        scrim: {
-                            bg: '#0B0E14',
-                            card: '#151A23',
-                            border: '#232A36',
-                            accent: '#00F0FF',
-                            purple: '#7000FF',
-                            pink: '#FF007A',
-                            text: '#E2E8F0',
-                            muted: '#94A3B8'
-                        }
-                    },
-                    fontFamily: {
-                        heading: ['Rajdhani', 'sans-serif'],
-                        body: ['Inter', 'sans-serif']
-                    }
-                }
-            }
-        }
-    </script>
     <style>
-        body {
-            background-color: #0B0E14;
-            color: #E2E8F0;
+        /* RESET & BASE STYLES */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             font-family: 'Inter', sans-serif;
         }
-        .font-heading { font-family: 'Rajdhani', sans-serif; }
-        .radar-sweep {
-            animation: radar-sweep 2s linear infinite;
+
+        body {
+            background-color: #0b0e14;
+            color: #e2e8f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
-        @keyframes radar-sweep {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        h1, h2, h3, .brand-text {
+            font-family: 'Rajdhani', sans-serif;
+        }
+
+        /* HEADER & NAVBAR */
+        header {
+            background-color: rgba(21, 26, 35, 0.95);
+            border-bottom: 1px solid #232a36;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(8px);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .logo-icon {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #00f0ff, #7000ff);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #000;
+            font-size: 20px;
+        }
+
+        .logo-title {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        .logo-title span {
+            color: #00f0ff;
+        }
+
+        /* NAVIGATION LINKS */
+        .desktop-nav {
+            display: none;
+            gap: 20px;
+        }
+
+        @media (min-width: 768px) {
+            .desktop-nav { display: flex; }
+            .mobile-btn { display: none !important; }
+        }
+
+        .nav-link {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .nav-link.active, .nav-link:hover {
+            color: #00f0ff;
+            background-color: rgba(0, 240, 255, 0.05);
+        }
+
+        /* HEADER RIGHT ACTIONS */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            background-color: #0b0e14;
+            border: 1px solid #232a36;
+            border-radius: 8px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            color: #fff;
+            border-color: #00f0ff;
+        }
+
+        .badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #ff007a;
+            color: #fff;
+            font-size: 10px;
+            font-weight: bold;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .avatar-img {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid #00f0ff;
+            cursor: pointer;
+        }
+
+        /* MOBILE MENU DRAWER */
+        .mobile-drawer {
+            display: none;
+            background-color: #151a23;
+            border-bottom: 1px solid #232a36;
+            padding: 12px 16px;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mobile-drawer.open {
+            display: flex;
+        }
+
+        .mobile-drawer .nav-link {
+            width: 100%;
+            padding: 12px;
+            background-color: #0b0e14;
+        }
+
+        /* MAIN LAYOUT */
+        main {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 20px 16px;
+            flex: 1;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* CARDS & CONTAINERS */
+        .card {
+            background-color: #151a23;
+            border: 1px solid #232a36;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .hero-card {
+            background: linear-gradient(135deg, #151a23 0%, #1e1035 100%);
+            border: 1px solid rgba(112, 0, 255, 0.4);
+            position: relative;
+        }
+
+        .tag-pill {
+            display: inline-block;
+            background-color: rgba(0, 240, 255, 0.1);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: #00f0ff;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+
+        .hero-title {
+            font-size: 28px;
+            line-height: 1.2;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 768px) {
+            .hero-title { font-size: 38px; }
+        }
+
+        .hero-desc {
+            color: #94a3b8;
+            font-size: 14px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+
+        /* BUTTONS */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 13px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-primary {
+            background-color: #00f0ff;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #33f3ff;
+        }
+
+        .btn-secondary {
+            background-color: #0b0e14;
+            color: #fff;
+            border: 1px solid #232a36;
+        }
+
+        .btn-secondary:hover {
+            border-color: #00f0ff;
+        }
+
+        /* GAME FILTERS */
+        .filter-bar {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            background-color: #151a23;
+            border: 1px solid #232a36;
+            color: #94a3b8;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background-color: #00f0ff;
+            color: #000;
+            border-color: #00f0ff;
+            font-weight: bold;
+        }
+
+        /* GRID LOBBY */
+        .grid-cards {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .grid-cards { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (min-width: 1024px) {
+            .grid-cards { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .lobby-card {
+            background-color: #151a23;
+            border: 1px solid #232a36;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .lobby-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .lobby-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 4px;
+        }
+
+        .status-badge {
+            background-color: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            font-size: 10px;
+            font-weight: bold;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .info-row span:last-child {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .btn-full {
+            width: 100%;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        /* TABLES */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        th {
+            background-color: #0b0e14;
+            color: #94a3b8;
+            padding: 12px;
+            border-bottom: 1px solid #232a36;
+            text-transform: uppercase;
+            font-size: 11px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #232a36;
+        }
+
+        /* NOTIFICATION DROPDOWN */
+        .notif-menu {
+            display: none;
+            position: absolute;
+            top: 48px;
+            right: 0;
+            width: 280px;
+            background-color: #151a23;
+            border: 1px solid #232a36;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            z-index: 100;
+        }
+
+        .notif-menu.open { display: block; }
+
+        /* FOOTER */
+        footer {
+            border-top: 1px solid #232a36;
+            background-color: #151a23;
+            text-align: center;
+            padding: 20px;
+            font-size: 12px;
+            color: #94a3b8;
+            margin-top: 40px;
         }
     </style>
 </head>
-<body class="bg-scrim-bg min-h-screen flex flex-col">
+<body>
 
     <!-- NAVBAR HEADER -->
-    <header class="border-b border-scrim-border bg-scrim-card/80 backdrop-blur sticky top-0 z-40">
-        <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-            
-            <!-- Logo -->
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('lobby')">
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-tr from-scrim-accent to-scrim-purple flex items-center justify-center font-heading font-bold text-2xl text-black">
-                    S
-                </div>
-                <div>
-                    <span class="font-heading font-bold text-2xl tracking-wider text-white">SCRIM<span class="text-scrim-accent">CLUB</span></span>
-                </div>
+    <header>
+        <div class="nav-container">
+            <!-- LOGO -->
+            <div class="logo-box" onclick="switchTab('lobby')">
+                <div class="logo-icon">S</div>
+                <div class="logo-title">SCRIM<span>CLUB</span></div>
             </div>
 
-            <!-- Desktop Navigation -->
-            <nav class="hidden md:flex items-center space-x-6 text-sm font-semibold">
-                <button onclick="switchTab('lobby')" id="nav-lobby" class="nav-btn text-scrim-accent flex items-center space-x-2">
-                    <i class="fa-solid fa-gamepad"></i><span>Lobi Scrim</span>
+            <!-- DESKTOP NAV -->
+            <nav class="desktop-nav">
+                <button onclick="switchTab('lobby')" id="nav-lobby" class="nav-link active">
+                    <i class="fa-solid fa-gamepad"></i> Lobi Scrim
                 </button>
-                <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="nav-btn text-scrim-muted hover:text-white flex items-center space-x-2">
-                    <i class="fa-solid fa-trophy"></i><span>Leaderboard</span>
+                <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="nav-link">
+                    <i class="fa-solid fa-trophy"></i> Leaderboard
                 </button>
-                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn text-scrim-muted hover:text-white flex items-center space-x-2">
-                    <i class="fa-solid fa-chart-line"></i><span>Dashboard</span>
+                <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-link">
+                    <i class="fa-solid fa-chart-line"></i> Dashboard
                 </button>
-                <button onclick="switchTab('store')" id="nav-store" class="nav-btn text-scrim-muted hover:text-white flex items-center space-x-2">
-                    <i class="fa-solid fa-store"></i><span>Top-Up Store</span>
+                <button onclick="switchTab('store')" id="nav-store" class="nav-link">
+                    <i class="fa-solid fa-store"></i> Top-Up Store
                 </button>
-                <button onclick="switchTab('lft')" id="nav-lft" class="nav-btn text-scrim-muted hover:text-white flex items-center space-x-2">
-                    <i class="fa-solid fa-users-viewfinder"></i><span>LFT Hub</span>
+                <button onclick="switchTab('lft')" id="nav-lft" class="nav-link">
+                    <i class="fa-solid fa-users"></i> LFT Hub
                 </button>
             </nav>
 
-            <!-- User Icons & Mobile Hamburger Button -->
-            <div class="flex items-center space-x-3">
-                <!-- Notif Button -->
-                <div class="relative">
-                    <button onclick="toggleNotifDropdown()" class="w-10 h-10 rounded-lg bg-scrim-bg border border-scrim-border flex items-center justify-center text-scrim-muted hover:text-white">
-                        <i class="fa-solid fa-bell"></i>
-                        <span id="notif-badge" class="absolute -top-1 -right-1 bg-scrim-pink text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">2</span>
-                    </button>
+            <!-- RIGHT ACTIONS -->
+            <div class="header-actions">
+                <div class="icon-btn" onclick="toggleNotif()">
+                    <i class="fa-solid fa-bell"></i>
+                    <span class="badge" id="notif-badge">2</span>
 
-                    <!-- Notif Dropdown -->
-                    <div id="notif-dropdown" class="hidden absolute right-0 mt-2 w-72 bg-scrim-card border border-scrim-border rounded-xl shadow-2xl p-4 z-50">
-                        <div class="flex items-center justify-between mb-3 border-b border-scrim-border pb-2">
-                            <span class="font-heading font-bold text-base">Notifikasi</span>
-                            <button onclick="clearNotifs()" class="text-[11px] text-scrim-accent hover:underline">Tandai Dibaca</button>
+                    <!-- DROPDOWN NOTIF -->
+                    <div class="notif-menu" id="notif-menu">
+                        <div style="display:flex; justify-content:space-between; margin-bottom:8px; font-weight:bold; font-size:12px;">
+                            <span>Notifikasi</span>
+                            <span style="color:#00f0ff; cursor:pointer;" onclick="clearNotif()">Bersihkan</span>
                         </div>
-                        <div class="space-y-2 text-xs" id="notif-list">
-                            <div class="p-2 bg-scrim-bg rounded border border-scrim-border">
-                                <p class="text-white font-semibold">Tantangan Scrim Disetujui!</p>
-                                <p class="text-scrim-muted text-[11px]">EVOS Esports menyetujui match MLBB jam 19:30.</p>
+                        <div id="notif-list" style="font-size:11px; color:#94a3b8;">
+                            <div style="background:#0b0e14; padding:8px; border-radius:6px; margin-bottom:6px;">
+                                <strong style="color:#fff;">Match Disetujui!</strong><br>
+                                EVOS Esports menerima tantangan MLBB 19:30.
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Profile Pic -->
-                <div onclick="switchTab('profile')" class="flex items-center bg-scrim-bg border border-scrim-border p-1 rounded-lg cursor-pointer">
-                    <img src="[https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&auto=format&fit=crop&q=60)" class="w-8 h-8 rounded-md object-cover" alt="Avatar">
-                </div>
+                <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&auto=format&fit=crop&q=60" class="avatar-img" onclick="switchTab('profile')" alt="User Avatar">
 
-                <!-- Mobile Menu Button (Hamburger) -->
-                <button onclick="toggleMobileMenu()" class="md:hidden w-10 h-10 rounded-lg bg-scrim-bg border border-scrim-border flex items-center justify-center text-white text-lg">
+                <button class="icon-btn mobile-btn" onclick="toggleMobileMenu()">
                     <i class="fa-solid fa-bars"></i>
                 </button>
             </div>
-
         </div>
 
-        <!-- Mobile Drawer Menu (Menampilkan Menu Navigasi di HP) -->
-        <div id="mobile-menu" class="hidden md:hidden bg-scrim-card border-b border-scrim-border px-4 pt-2 pb-4 space-y-2 text-sm">
-            <button onclick="switchTab('lobby'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded bg-scrim-bg text-scrim-accent font-semibold flex items-center space-x-3">
-                <i class="fa-solid fa-gamepad"></i><span>Lobi Scrim</span>
+        <!-- MOBILE DRAWER -->
+        <div class="mobile-drawer" id="mobile-drawer">
+            <button onclick="switchTab('lobby'); toggleMobileMenu()" class="nav-link active">
+                <i class="fa-solid fa-gamepad"></i> Lobi Scrim
             </button>
-            <button onclick="switchTab('leaderboard'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded hover:bg-scrim-bg text-scrim-muted hover:text-white flex items-center space-x-3">
-                <i class="fa-solid fa-trophy"></i><span>Leaderboard</span>
+            <button onclick="switchTab('leaderboard'); toggleMobileMenu()" class="nav-link">
+                <i class="fa-solid fa-trophy"></i> Leaderboard
             </button>
-            <button onclick="switchTab('dashboard'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded hover:bg-scrim-bg text-scrim-muted hover:text-white flex items-center space-x-3">
-                <i class="fa-solid fa-chart-line"></i><span>Dashboard Scrim</span>
+            <button onclick="switchTab('dashboard'); toggleMobileMenu()" class="nav-link">
+                <i class="fa-solid fa-chart-line"></i> Dashboard Scrim
             </button>
-            <button onclick="switchTab('store'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded hover:bg-scrim-bg text-scrim-muted hover:text-white flex items-center space-x-3">
-                <i class="fa-solid fa-store"></i><span>Top-Up Store</span>
+            <button onclick="switchTab('store'); toggleMobileMenu()" class="nav-link">
+                <i class="fa-solid fa-store"></i> Top-Up Store
             </button>
-            <button onclick="switchTab('lft'); toggleMobileMenu()" class="w-full text-left py-2 px-3 rounded hover:bg-scrim-bg text-scrim-muted hover:text-white flex items-center space-x-3">
-                <i class="fa-solid fa-users-viewfinder"></i><span>LFT Hub</span>
+            <button onclick="switchTab('lft'); toggleMobileMenu()" class="nav-link">
+                <i class="fa-solid fa-users"></i> LFT Hub
+            </button>
+            <button onclick="switchTab('profile'); toggleMobileMenu()" class="nav-link">
+                <i class="fa-solid fa-user"></i> Profil Saya
             </button>
         </div>
     </header>
 
-    <!-- MAIN CONTENT AREA -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4">
-
+    <!-- MAIN CONTENT -->
+    <main>
         <!-- TAB 1: LOBI SCRIM -->
-        <section id="tab-lobby" class="space-y-6">
-            <div class="bg-scrim-card border border-scrim-border rounded-2xl p-5 relative overflow-hidden">
-                <span class="px-2.5 py-0.5 rounded-full bg-scrim-accent/10 border border-scrim-accent/30 text-scrim-accent text-[11px] font-bold">AUTOMATED MATCHMAKING</span>
-                <h1 class="font-heading text-2xl sm:text-4xl font-bold mt-2">LOBI SCRIM SOLUSI PARING ESPORTS</h1>
-                <p class="text-scrim-muted mt-1 text-xs sm:text-sm">Daftar tim, cari lawan tanpa jam karet, kumpulkan Poin Keaktifan, dan dapatkan Reward Komunitas!</p>
+        <section id="tab-lobby" class="tab-content active">
+            <div class="card hero-card">
+                <span class="tag-pill">AUTOMATED MATCHMAKING SYSTEM</span>
+                <h1 class="hero-title">LOBI SCRIM SOLUSI PARING ESPORTS</h1>
+                <p class="hero-desc">Daftar tim, cari lawan tanpa jam karet, kumpulkan Poin Keaktifan, dan dapatkan Reward Komunitas setiap minggu!</p>
                 
-                <div class="mt-4 flex flex-wrap gap-2">
-                    <button onclick="startQueue()" class="bg-scrim-accent text-black font-bold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2">
-                        <i class="fa-solid fa-bolt"></i><span>Quick Matchmaking</span>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="alert('Mencari Quick Match...')">
+                        <i class="fa-solid fa-bolt"></i> Quick Matchmaking
                     </button>
-                    <button onclick="alert('Fitur Buat Room Manual dibuka!')" class="bg-scrim-bg border border-scrim-border text-white font-bold px-5 py-2.5 rounded-xl text-xs flex items-center space-x-2">
-                        <i class="fa-solid fa-plus"></i><span>Buat Room Scrim</span>
+                    <button class="btn btn-secondary" onclick="alert('Form Buat Room Dibuka!')">
+                        <i class="fa-solid fa-plus"></i> Buat Room Scrim
                     </button>
                 </div>
             </div>
 
-            <!-- Game Filters -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-1 text-xs">
-                <button class="px-4 py-2 rounded-xl bg-scrim-accent text-black font-bold whitespace-nowrap">Semua Game</button>
-                <button class="px-4 py-2 rounded-xl bg-scrim-card border border-scrim-border text-scrim-muted hover:text-white whitespace-nowrap">Mobile Legends</button>
-                <button class="px-4 py-2 rounded-xl bg-scrim-card border border-scrim-border text-scrim-muted hover:text-white whitespace-nowrap">PUBG Mobile</button>
-                <button class="px-4 py-2 rounded-xl bg-scrim-card border border-scrim-border text-scrim-muted hover:text-white whitespace-nowrap">Valorant</button>
+            <!-- GAME FILTER -->
+            <div class="filter-bar">
+                <button class="filter-btn active">Semua Game</button>
+                <button class="filter-btn">Mobile Legends</button>
+                <button class="filter-btn">PUBG Mobile</button>
+                <button class="filter-btn">Valorant</button>
+                <button class="filter-btn">Free Fire</button>
             </div>
 
-            <!-- Available Lobbies -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div class="bg-scrim-card border border-scrim-border rounded-xl p-4">
-                    <div class="flex justify-between items-start mb-2">
+            <!-- CARDS GRID -->
+            <div class="grid-cards">
+                <!-- CARD 1 -->
+                <div class="lobby-card">
+                    <div class="lobby-header">
                         <div>
-                            <span class="text-[10px] bg-scrim-accent/10 text-scrim-accent font-bold px-2 py-0.5 rounded">MLBB - 5v5</span>
-                            <h3 class="font-heading font-bold text-lg mt-1">RRQ Academy Tryout</h3>
+                            <span class="tag-pill" style="margin:0;">MLBB - 5v5</span>
+                            <div class="lobby-title">RRQ Academy Tryout</div>
                         </div>
-                        <span class="text-[10px] bg-green-500/10 text-green-400 px-2 py-0.5 rounded font-bold">Open</span>
+                        <span class="status-badge">Open Slot</span>
                     </div>
-                    <div class="space-y-1 text-xs text-scrim-muted mb-4">
-                        <div class="flex justify-between"><span>Tier:</span><span class="text-white">Mythic Immortal</span></div>
-                        <div class="flex justify-between"><span>Format:</span><span class="text-white">BO3</span></div>
-                        <div class="flex justify-between"><span>Waktu:</span><span class="text-white">19:30 WIB</span></div>
+                    <div style="margin-top: 12px;">
+                        <div class="info-row"><span>Tier Rata-rata:</span><span>Mythic Immortal</span></div>
+                        <div class="info-row"><span>Format Match:</span><span>BO3 (Best of 3)</span></div>
+                        <div class="info-row"><span>Waktu Tanding:</span><span>Hari Ini, 19:30 WIB</span></div>
                     </div>
-                    <button onclick="alert('Tantangan berhasil dikirim ke RRQ Academy!')" class="w-full py-2 bg-scrim-accent/10 border border-scrim-accent/40 text-scrim-accent font-bold rounded-lg text-xs hover:bg-scrim-accent hover:text-black">
+                    <button class="btn btn-primary btn-full" onclick="alert('Tantangan berhasil dikirim!')">
+                        Tantang Match
+                    </button>
+                </div>
+
+                <!-- CARD 2 -->
+                <div class="lobby-card">
+                    <div class="lobby-header">
+                        <div>
+                            <span class="tag-pill" style="margin:0; color:#7000ff; border-color:#7000ff;">Valorant 5v5</span>
+                            <div class="lobby-title">Aero Esports Practice</div>
+                        </div>
+                        <span class="status-badge">Open Slot</span>
+                    </div>
+                    <div style="margin-top: 12px;">
+                        <div class="info-row"><span>Tier Rata-rata:</span><span>Ascendant - Immortal</span></div>
+                        <div class="info-row"><span>Format Match:</span><span>BO1 Standard</span></div>
+                        <div class="info-row"><span>Waktu Tanding:</span><span>Hari Ini, 20:00 WIB</span></div>
+                    </div>
+                    <button class="btn btn-secondary btn-full" onclick="alert('Tantangan dikirim!')">
                         Tantang Match
                     </button>
                 </div>
@@ -194,140 +592,30 @@
         </section>
 
         <!-- TAB 2: LEADERBOARD -->
-        <section id="tab-leaderboard" class="hidden space-y-4">
-            <h2 class="font-heading font-bold text-2xl">LEADERBOARD KEAKTIFAN TIM</h2>
-            <div class="bg-scrim-card border border-scrim-border rounded-xl overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-scrim-bg border-b border-scrim-border text-scrim-muted uppercase">
-                        <tr>
-                            <th class="p-3">Rank</th>
-                            <th class="p-3">Nama Tim</th>
-                            <th class="p-3">Game</th>
-                            <th class="p-3 text-right">Poin</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-scrim-border">
-                        <tr>
-                            <td class="p-3 font-bold text-yellow-400">#1</td>
-                            <td class="p-3 font-bold text-white">ALPHA ONE ESPORTS</td>
-                            <td class="p-3 text-scrim-muted">Mobile Legends</td>
-                            <td class="p-3 text-right font-bold text-scrim-accent">4,850 Pts</td>
-                        </tr>
-                        <tr>
-                            <td class="p-3 font-bold text-slate-300">#2</td>
-                            <td class="p-3 font-bold text-white">NOVA PRIME</td>
-                            <td class="p-3 text-scrim-muted">Valorant</td>
-                            <td class="p-3 text-right font-bold text-scrim-accent">4,210 Pts</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
+        <section id="tab-leaderboard" class="tab-content">
+            <div class="card">
+                <h2>LEADERBOARD KEAKTIFAN TIM</h2>
+                <p style="color:#94a3b8; font-size:13px; margin-top:4px; margin-bottom:16px;">
+                    Tim teratas dengan Fair-Play tinggi berhak mendapatkan Community Rewards!
+                </p>
 
-        <!-- TAB 3: DASHBOARD SCRIM -->
-        <section id="tab-dashboard" class="hidden space-y-4">
-            <h2 class="font-heading font-bold text-2xl">DASHBOARD SCRIM KAMU</h2>
-            <div class="bg-scrim-card border border-scrim-border p-4 rounded-xl flex flex-col md:flex-row justify-between items-center gap-3">
-                <div>
-                    <span class="text-[10px] text-scrim-muted">Match ID #48191</span>
-                    <div class="font-bold text-white text-base">REX REGUM ACADEMY vs EVOS ESPORTS</div>
-                </div>
-                <div class="bg-scrim-bg p-2 rounded border border-scrim-border text-xs flex items-center space-x-3">
-                    <div>
-                        <span>Room ID: <strong class="text-white">884912</strong></span> | 
-                        <span>Pass: <strong id="pass-val" class="text-scrim-accent">••••••</strong></span>
-                    </div>
-                    <button onclick="togglePass()" class="px-2 py-1 bg-scrim-card text-[10px] rounded">Show</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- TAB 4: TOP-UP STORE -->
-        <section id="tab-store" class="hidden space-y-4">
-            <h2 class="font-heading font-bold text-2xl">INSTANT TOP-UP VOUCHER</h2>
-            <div class="bg-scrim-card border border-scrim-border p-4 rounded-xl space-y-3 text-xs">
-                <div>
-                    <label class="block text-scrim-muted mb-1">Pilih Game</label>
-                    <select class="w-full bg-scrim-bg border border-scrim-border p-2.5 rounded text-white">
-                        <option>Mobile Legends - Diamond</option>
-                        <option>PUBG Mobile - UC</option>
-                        <option>Valorant - VP</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-scrim-muted mb-1">User ID & Server</label>
-                    <input type="text" placeholder="12345678 (2001)" class="w-full bg-scrim-bg border border-scrim-border p-2.5 rounded text-white">
-                </div>
-                <button onclick="alert('Mengalihkan ke sistem pembayaran QRIS...')" class="w-full py-2.5 bg-scrim-accent text-black font-bold rounded">
-                    Bayar via QRIS
-                </button>
-            </div>
-        </section>
-
-        <!-- TAB 5: LFT HUB -->
-        <section id="tab-lft" class="hidden space-y-4">
-            <h2 class="font-heading font-bold text-2xl">LOOKING FOR TEAM (LFT)</h2>
-            <div class="bg-scrim-card border border-scrim-border p-4 rounded-xl space-y-2">
-                <p class="font-bold text-white text-sm">SKY_LIGHTER (MLBB)</p>
-                <p class="text-xs text-scrim-muted">Role: Midlaner / Roamer. Siap jam scrim malam konsisten.</p>
-                <button onclick="alert('Pesan terkirim ke pemain!')" class="w-full py-1.5 bg-scrim-bg border border-scrim-border text-xs font-bold rounded hover:border-scrim-accent">
-                    Hubungi Player
-                </button>
-            </div>
-        </section>
-
-        <!-- TAB 6: PROFILE -->
-        <section id="tab-profile" class="hidden space-y-4">
-            <div class="bg-scrim-card border border-scrim-border p-4 rounded-xl text-center">
-                <img src="[https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=60](https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=60)" class="w-20 h-20 rounded-xl mx-auto mb-2 object-cover" alt="Avatar">
-                <h3 class="font-bold text-xl text-white">REX_CAPTAIN</h3>
-                <p class="text-xs text-scrim-muted">Kapten: Rex Regum Academy</p>
-            </div>
-        </section>
-
-    </main>
-
-    <!-- QUEUE MODAL -->
-    <div id="queue-modal" class="hidden fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4">
-        <div class="bg-scrim-card border border-scrim-accent p-6 rounded-xl max-w-xs w-full text-center space-y-4">
-            <div class="w-16 h-16 border-2 border-scrim-accent rounded-full mx-auto radar-sweep"></div>
-            <p class="font-bold text-white text-sm">Mencari Lawan Scrim...</p>
-            <button onclick="cancelQueue()" class="w-full py-2 bg-red-500/20 text-red-400 border border-red-500/30 rounded text-xs font-bold">Batal</button>
-        </div>
-    </div>
-
-    <!-- JAVASCRIPT -->
-    <script>
-        function switchTab(tabId) {
-            const tabs = ['lobby', 'leaderboard', 'dashboard', 'store', 'lft', 'profile'];
-            tabs.forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-            });
-            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-        }
-
-        function toggleMobileMenu() {
-            const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('hidden');
-        }
-
-        function toggleNotifDropdown() {
-            document.getElementById('notif-dropdown').classList.toggle('hidden');
-        }
-
-        function clearNotifs() {
-            document.getElementById('notif-list').innerHTML = '<p class="text-scrim-muted text-center py-1">Kosong</p>';
-            document.getElementById('notif-badge').classList.add('hidden');
-        }
-
-        function startQueue() { document.getElementById('queue-modal').classList.remove('hidden'); }
-        function cancelQueue() { document.getElementById('queue-modal').classList.add('hidden'); }
-
-        function togglePass() {
-            const el = document.getElementById('pass-val');
-            el.innerText = el.innerText === '••••••' ? 'SCRIM99' : '••••••';
-        }
-    </script>
-</body>
-                            </html>
-    
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Rank</th>
+                                <th>Nama Tim</th>
+                                <th>Game</th>
+                                <th>Poin Keaktifan</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="color:#facc15; font-weight:bold;">#1</td>
+                                <td style="font-weight:bold; color:#fff;">ALPHA ONE ESPORTS</td>
+                                <td>Mobile Legends</td>
+                                <td style="color:#00f0ff; font-weight:bold;">4,850 Pts</td>
+                            </tr>
+                            <tr>
+                                <td style="color:#cbd5e1; font-weight:bold;">#2</td>
+                                <td style="font-weight:bold; color:#fff;">NOVA PRIME</
