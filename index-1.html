@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScrimClub – Premium scrim matchmaking</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0c0a16;--bg2:#15122a;--line:#2a2548;--tx:#f1eefc;--mut:#9892b8;--gold:#ffc24b;--vio:#7b5cff;--win:#4be0a8;--loss:#ff6b81;--r:18px}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:80px}
+body{background:radial-gradient(900px 500px at 85% -5%,#2a1d6a55,transparent),var(--bg);color:var(--tx);font:16px/1.55 'DM Sans',system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+h1,h2,h3,.brand{font-family:Unbounded,'DM Sans',sans-serif;line-height:1.1}
+h1{font-size:clamp(2.3rem,6.4vw,5rem);font-weight:900;letter-spacing:-.03em}
+h2{font-size:clamp(1.6rem,3.4vw,2.4rem);font-weight:700;letter-spacing:-.02em}
+h3{font-size:1.05rem;font-weight:500}
+section{padding:72px clamp(18px,5vw,64px);max-width:1280px;margin:auto}
+.muted{color:var(--mut)}
+.head{margin-bottom:28px}.head p{color:var(--mut);margin-top:8px}
+.nav{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:20px;padding:14px clamp(18px,5vw,64px);background:#0c0a16cc;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.brand{font-weight:500;font-size:1.15rem}.brand b{color:var(--gold);font-weight:900}
+.nav nav{display:flex;gap:22px;margin:0 auto;color:var(--mut)}
+.nav nav a{transition:color .2s}.nav nav a:hover{color:var(--tx)}
+.chip{border:1px solid var(--line);border-radius:99px;padding:6px 14px;background:var(--bg2);font-weight:700}
+.gem{color:var(--gold);margin-left:auto}
+.nav nav+.gem{margin-left:0}
+.burger{display:none;margin-left:auto;background:none;border:0;width:36px;height:36px;cursor:pointer}
+.burger span{display:block;height:2px;background:var(--tx);margin:7px 6px;transition:.3s}
+.btn{display:inline-block;background:var(--gold);color:#1b1200;font-weight:700;border:0;border-radius:99px;padding:13px 26px;cursor:pointer;font:700 1rem 'DM Sans';transition:transform .2s,box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 30px #ffc24b44}
+.btn.ghost{background:transparent;color:var(--tx);border:1px solid var(--line)}
+.btn.sm{padding:8px 16px;font-size:.9rem}.btn:disabled{opacity:.5;pointer-events:none}
+.row{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.hero{display:grid;grid-template-columns:1.3fr 1fr;gap:48px;align-items:center;min-height:82vh}
+.tag{color:var(--gold);font-weight:700;margin-bottom:18px}
+.lead{color:var(--mut);max-width:46ch;margin-top:22px;font-size:1.1rem}
+.hero h1,.hero .lead,.hero .row,.hero .tag{animation:rise .9s cubic-bezier(.2,.8,.2,1) both}
+.hero .lead{animation-delay:.15s}.hero .row{animation-delay:.3s}
+@keyframes rise{from{opacity:0;transform:translateY(26px)}}
+.queue{background:linear-gradient(160deg,var(--bg2),#100d22);border:1px solid var(--line);border-radius:28px;padding:26px;animation:rise 1s .3s both}
+.radar{position:relative;height:190px;display:grid;place-items:center}
+.radar i{position:absolute;width:60px;height:60px;border:2px solid var(--vio);border-radius:50%;animation:ping 3s infinite}
+.radar i:nth-child(2){animation-delay:1s}.radar i:nth-child(3){animation-delay:2s}
+.radar em{font:900 .85rem Unbounded;font-style:normal;color:var(--gold);background:var(--bg);padding:10px 14px;border-radius:99px;z-index:1;border:1px solid var(--gold)}
+@keyframes ping{to{width:190px;height:190px;opacity:0}}
+#ticker{list-style:none;padding:0;display:grid;gap:8px}
+#ticker li{display:flex;justify-content:space-between;padding:10px 14px;background:#ffffff08;border-radius:12px;animation:rise .5s both;font-size:.92rem}
+.grid{display:grid;gap:18px}
+.cards{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.panel,.card{background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.card{transition:transform .25s,border-color .25s}.card:hover{transform:translateY(-4px);border-color:var(--vio)}
+.card .top{display:flex;gap:14px;align-items:center;margin-bottom:14px}
+.logo{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;font:700 .95rem Unbounded;background:var(--c,var(--vio))}
+.meta{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0 18px}
+.pill{font-size:.8rem;padding:3px 10px;border-radius:99px;background:#ffffff10;color:var(--mut)}
+.pill.ok{color:var(--win);background:#4be0a814}.pill.gold{color:var(--gold);background:#ffc24b14}
+.card .foot{display:flex;justify-content:space-between;align-items:center}
+.filters,.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px}
+.filters button,.tabs button{background:none;color:var(--mut);border:1px solid var(--line);border-radius:99px;padding:8px 16px;cursor:pointer;font:500 .92rem 'DM Sans';transition:.2s}
+.filters button.on,.tabs button.on{background:var(--vio);color:#fff;border-color:var(--vio)}
+.profile{display:grid;grid-template-columns:340px 1fr;gap:18px}
+.who{text-align:center}
+.avatar{width:96px;height:96px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font:900 1.7rem Unbounded;background:conic-gradient(var(--gold),var(--vio),var(--gold));color:#0c0a16}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:20px;gap:8px}
+.stats b{display:block;font:700 1.4rem Unbounded}.stats span{color:var(--mut);font-size:.8rem}
+.rank{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.rank .logo{width:64px;height:64px;font-size:1.3rem}
+.bar{height:8px;border-radius:9px;background:#ffffff12;overflow:hidden;margin-top:8px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--vio),var(--gold));border-radius:9px;transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.kv{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px}
+.kv div{background:#ffffff08;padding:12px 14px;border-radius:12px}.kv span{display:block;color:var(--mut);font-size:.8rem}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.list{list-style:none;padding:0;margin-top:14px;display:grid;gap:10px}
+.list li{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;background:#ffffff08;border-radius:12px}
+.list small{display:block;color:var(--mut)}
+.w{color:var(--win);font-weight:700}.l{color:var(--loss);font-weight:700}
+.switch{width:44px;height:24px;border-radius:99px;background:#ffffff1c;border:0;position:relative;cursor:pointer;flex:none;transition:.25s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.25s}
+.switch.on{background:var(--win)}.switch.on::after{transform:translateX(20px)}
+.packs{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+.pack{cursor:pointer;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:24px 14px;color:var(--tx);transition:.25s;font-family:inherit}
+.pack:hover,.pack.on{border-color:var(--gold);transform:translateY(-4px)}
+.pack.on{box-shadow:0 0 0 1px var(--gold),0 14px 36px #ffc24b22}
+.pack b{display:block;font:700 1.7rem Unbounded;color:var(--gold)}.pack span{color:var(--mut);font-size:.9rem}
+.pay{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-top:18px;flex-wrap:wrap}
+select{background:var(--bg);color:var(--tx);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit}
+.table{padding:8px 14px;overflow-x:auto}
+.trow{display:grid;grid-template-columns:48px 1fr 90px 80px;align-items:center;gap:12px;padding:14px 8px;border-bottom:1px solid var(--line);min-width:320px}
+.trow:last-child{border:0}.trow .n{font:700 1.1rem Unbounded;color:var(--mut)}.trow:nth-child(-n+3) .n{color:var(--gold)}
+.badges{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.badge{text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:var(--r);padding:22px 12px}
+.badge .ic{font-size:2rem;width:64px;height:64px;margin:0 auto 10px;display:grid;place-items:center;border-radius:50%;background:#ffc24b1c}
+.badge.lock{opacity:.45}.badge.lock .ic{filter:grayscale(1);background:#ffffff10}
+.badge small{color:var(--mut);display:block;margin-top:4px}
+footer{padding:40px clamp(18px,5vw,64px);border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,120px);background:var(--gold);color:#1b1200;font-weight:700;padding:12px 22px;border-radius:99px;transition:transform .4s cubic-bezier(.2,.8,.2,1);z-index:50;max-width:90vw}
+.toast.show{transform:translate(-50%,0)}
+@media(max-width:860px){
+ .hero,.profile,.two{grid-template-columns:1fr}.hero{min-height:auto;padding-top:40px}
+ .burger{display:block}.gem{margin-left:0}
+ .nav nav{position:absolute;top:100%;left:0;right:0;flex-direction:column;gap:0;background:var(--bg);border-bottom:1px solid var(--line);max-height:0;overflow:hidden;transition:max-height .4s}
+ .nav nav.open{max-height:360px}.nav nav a{padding:14px clamp(18px,5vw,64px)}
+ section{padding:52px 18px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<header class="nav" id="nav">
+  <a class="brand" href="#top">Scrim<b>Club</b></a>
+  <button class="burger" id="burger" aria-label="Menu" aria-expanded="false"><span></span><span></span></button>
+  <nav id="menu">
+    <a href="#lobby">Lobby</a><a href="#profile">Profile</a><a href="#dashboard">Dashboard</a>
+    <a href="#leaderboard">Leaderboard</a><a href="#rewards">Rewards</a><a href="#badges">Badges</a>
+  </nav>
+  <a class="chip gem" href="#topup" id="balance">◆ <span id="gems">0</span></a>
+</header>
+
+<main id="top">
+<section class="hero">
+  <div class="hero-text">
+    <p class="tag">Season 7 · Invite-only rooms</p>
+    <h1>Scrim the teams<br>that make you<br>better.</h1>
+    <p class="lead">Rank-matched practice lobbies for serious squads. Pick a slot, lock the match, get a reminder before kickoff.</p>
+    <div class="row"><a class="btn" href="#lobby">Find a scrim</a><a class="btn ghost" href="#topup">Top up diamonds</a></div>
+  </div>
+  <div class="queue" aria-label="Live queue">
+    <div class="radar"><i></i><i></i><i></i><em>LIVE</em></div>
+    <ul id="ticker"></ul>
+  </div>
+</section>
+
+<section id="lobby">
+  <div class="head"><h2>Open lobby</h2><p>Teams ready to scrim right now.</p></div>
+  <div class="filters" id="filters"></div>
+  <div class="grid cards" id="teams"></div>
+</section>
+
+<section id="profile">
+  <div class="head"><h2>Your profile</h2><p>Placeholder player data.</p></div>
+  <div class="profile">
+    <div class="panel who">
+      <div class="avatar">NV</div>
+      <h3>NovaKai</h3><p class="muted">Captain · Team Aurora Vex</p>
+      <div class="stats"><div><b>248</b><span>Scrims</span></div><div><b>71%</b><span>Win rate</span></div><div><b>14</b><span>Streak</span></div></div>
+    </div>
+    <div class="panel">
+      <div class="tabs" id="gameTabs"></div>
+      <div id="gameBody"></div>
+    </div>
+  </div>
+</section>
+
+<section id="dashboard">
+  <div class="head"><h2>Dashboard</h2><p>Your schedule and recent results.</p></div>
+  <div class="two">
+    <div class="panel"><h3>Upcoming scrims</h3><ul class="list" id="upcoming"></ul></div>
+    <div class="panel"><h3>History</h3><ul class="list" id="history"></ul></div>
+  </div>
+</section>
+
+<section id="topup">
+  <div class="head"><h2>Top up diamonds</h2><p>Use diamonds for priority slots, lobby boosts and rewards.</p></div>
+  <div class="grid packs" id="packs"></div>
+  <div class="pay panel"><div><span class="muted">Selected</span><h3 id="sel">–</h3></div>
+    <select id="method"><option>Card</option><option>E-wallet</option><option>Bank transfer</option></select>
+    <button class="btn" id="buy">Buy diamonds</button></div>
+</section>
+
+<section id="leaderboard">
+  <div class="head"><h2>Leaderboard</h2><p>Top teams by rating points.</p></div>
+  <div class="tabs" id="lbTabs"></div>
+  <div class="panel table" id="lb"></div>
+</section>
+
+<section id="rewards">
+  <div class="head"><h2>Rewards</h2><p>Claim with diamonds. Progress is saved in your browser.</p></div>
+  <div class="grid cards" id="rewardList"></div>
+</section>
+
+<section id="badges">
+  <div class="head"><h2>Badges</h2><p>Earn achievements by playing.</p></div>
+  <div class="grid badges" id="badgeList"></div>
+</section>
+</main>
+
+<footer><span class="brand">Scrim<b>Club</b></span><p class="muted">Fictional demo. All names, teams and prices are placeholders.</p></footer>
+<div class="toast" id="toast" role="status"></div>
+<script>
+const $=(s,r=document)=>r.querySelector(s), el=(h)=>{const t=document.createElement('template');t.innerHTML=h.trim();return t.content.firstChild};
+const save=()=>localStorage.setItem('scrimclub',JSON.stringify(S));
+const S=Object.assign({gems:1200,sched:[0,1],remind:{0:true},claimed:[]},JSON.parse(localStorage.getItem('scrimclub')||'{}'));
+
+const teams=[
+ {n:'Neon Vanta',g:'Valorant',r:'Immortal',t:'19:00',c:'#7b5cff',s:'Open',w:68},
+ {n:'Iron Lotus',g:'Mobile Legends',r:'Mythic',t:'19:30',c:'#e0497a',s:'Ready',w:61},
+ {n:'Kairo Eclipse',g:'CS2',r:'Faceit 8',t:'20:00',c:'#2fb3a1',s:'Ready',w:72},
+ {n:'Solar Drift',g:'Valorant',r:'Ascendant',t:'20:00',c:'#e88a2f',s:'Open',w:55},
+ {n:'Pale Horizon',g:'Dota 2',r:'Divine',t:'20:30',c:'#4f86f7',s:'Open',w:64},
+ {n:'Vex Syndicate',g:'Mobile Legends',r:'Legend',t:'21:00',c:'#a24bd6',s:'Ready',w:58}];
+const games=['All',...new Set(teams.map(t=>t.g))];
+const profiles={Valorant:{rank:'Immortal 1',rr:62,role:'Duelist',main:'Jett, Raze',kd:'1.34',hs:'27%'},
+ 'Mobile Legends':{rank:'Mythic Glory',rr:35,role:'Roamer',main:'Khufra, Tigreal',kd:'4.1 KDA',hs:'–'},
+ CS2:{rank:'Faceit Lv 8',rr:80,role:'Entry',main:'AK-47',kd:'1.18',hs:'44%'}};
+const upcoming=[{t:'Neon Vanta',g:'Valorant',d:'Today · 19:00'},{t:'Kairo Eclipse',g:'CS2',d:'Tomorrow · 20:00'},{t:'Iron Lotus',g:'Mobile Legends',d:'Fri · 19:30'}];
+const history=[['Pale Horizon','Win','13–9'],['Solar Drift','Loss','8–13'],['Vex Syndicate','Win','2–0'],['Neon Vanta','Win','13–11'],['Iron Lotus','Loss','0–2']];
+const packs=[[100,'1.99'],[550,'9.99'],[1200,'19.99'],[2600,'39.99'],[6500,'89.99']];
+const lbData={Weekly:[['Kairo Eclipse',2840,'+3'],['Neon Vanta',2710,'+1'],['Aurora Vex',2655,'–2'],['Iron Lotus',2490,'+5'],['Pale Horizon',2410,'0'],['Solar Drift',2330,'–1']],
+ Season:[['Neon Vanta',18420,'+2'],['Aurora Vex',17990,'0'],['Kairo Eclipse',17310,'+1'],['Pale Horizon',16800,'–1'],['Iron Lotus',16120,'+4'],['Solar Drift',15500,'–3']]};
+const rewards=[['Priority slot pass',300,'⚡','Skip the queue for 3 scrims'],['Custom team banner',500,'🏳','Show it on your lobby card'],['Coach review',900,'🎯','30-min VOD review'],['Season crate',1500,'🎁','Random skins and boosts']];
+const badges=[['First scrim','Play 1 scrim','🎮',1],['Hot streak','Win 10 in a row','🔥',1],['Centurion','Play 100 scrims','💯',1],['Team captain','Lead a roster','👑',1],['Early bird','Join before 12:00','🌅',0],['Giant slayer','Beat a top 3 team','⚔️',0],['Diamond donor','Top up 5 times','💎',0],['Season MVP','Finish #1','🏆',0]];
+
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toast.id);toast.id=setTimeout(()=>t.classList.remove('show'),2400)};
+const gems=()=>{$('#gems').textContent=S.gems.toLocaleString();save()};
+const tabs=(box,items,fn,i=0)=>{box.innerHTML='';items.forEach((x,j)=>{const b=el(`<button>${x}</button>`);b.onclick=()=>{[...box.children].forEach(c=>c.classList.remove('on'));b.classList.add('on');fn(x)};box.append(b);if(j==i)b.classList.add('on')});fn(items[i])};
+
+// nav
+$('#burger').onclick=e=>{const o=$('#menu').classList.toggle('open');e.currentTarget.setAttribute('aria-expanded',o)};
+$('#menu').onclick=()=>$('#menu').classList.remove('open');
+
+// ticker
+const tk=$('#ticker');let ti=0;
+const tick=()=>{const t=teams[ti++%teams.length];const li=el(`<li><span>${t.n} · ${t.g}</span><b>${t.t}</b></li>`);tk.prepend(li);if(tk.children.length>4)tk.lastChild.remove()};
+for(let i=0;i<4;i++)tick();setInterval(tick,2600);
+
+// lobby
+function lobby(f){const box=$('#teams');box.innerHTML='';
+ teams.map((t,i)=>[t,i]).filter(([t])=>f=='All'||t.g==f).forEach(([t,i])=>{
+ const done=S.sched.includes(i);
+ const c=el(`<article class="card"><div class="top"><div class="logo" style="--c:${t.c}">${t.n.split(' ').map(w=>w[0]).join('')}</div><div><h3>${t.n}</h3><span class="muted">${t.g}</span></div></div>
+ <div class="meta"><span class="pill gold">${t.r}</span><span class="pill ${t.s=='Ready'?'ok':''}">${t.s}</span><span class="pill">${t.w}% win</span></div>
+ <div class="foot"><b>Today ${t.t}</b><button class="btn sm" ${done?'disabled':''}>${done?'Scheduled':'Challenge'}</button></div></article>`);
+ c.querySelector('button').onclick=()=>{S.sched.push(i);save();toast(`Scrim booked with ${t.n}`);lobby(f);dash()};box.append(c)})}
+tabs($('#filters'),games,lobby);
+
+// profile
+tabs($('#gameTabs'),Object.keys(profiles),g=>{const p=profiles[g];
+ $('#gameBody').innerHTML=`<div class="rank"><div class="logo" style="--c:var(--gold);color:#1b1200">${p.rank.slice(0,2)}</div><div style="flex:1"><h3>${p.rank}</h3><span class="muted">${p.rr}/100 to next rank</span><div class="bar"><i></i></div></div></div>
+ <div class="kv"><div><span>Role</span>${p.role}</div><div><span>Main</span>${p.main}</div><div><span>K/D</span>${p.kd}</div><div><span>Headshot</span>${p.hs}</div></div>`;
+ setTimeout(()=>$('#gameBody .bar i').style.width=p.rr+'%',50)});
+
+// dashboard
+function dash(){
+ const u=$('#upcoming');u.innerHTML='';
+ const all=[...upcoming,...S.sched.filter(i=>i>2||true).map(i=>teams[i]&&{t:teams[i].n,g:teams[i].g,d:'Today · '+teams[i].t,k:i})].filter(Boolean);
+ const seen=new Set();
+ S.sched.forEach(i=>{const t=teams[i];if(!t||seen.has(i))return;seen.add(i);
+  const li=el(`<li><div><b>${t.n}</b><small>${t.g} · Today ${t.t}</small></div><button class="switch ${S.remind[i]?'on':''}" aria-label="Reminder" title="Reminder"></button></li>`);
+  li.querySelector('button').onclick=e=>{S.remind[i]=!S.remind[i];e.target.classList.toggle('on');save();toast(S.remind[i]?'Reminder on: 15 min before':'Reminder off')};u.append(li)});
+ if(!u.children.length)u.append(el('<li class="muted">No scrims yet. Pick one in the lobby.</li>'));
+ $('#history').innerHTML=history.map(h=>`<li><div><b>${h[0]}</b><small>${h[2]}</small></div><span class="${h[1]=='Win'?'w':'l'}">${h[1]}</span></li>`).join('')}
+dash();
+
+// topup
+let sel=null;
+$('#packs').append(...packs.map((p,i)=>{const b=el(`<button class="pack"><b>◆ ${p[0].toLocaleString()}</b><span>$${p[1]}</span></button>`);
+ b.onclick=()=>{sel=i;[...$('#packs').children].forEach(c=>c.classList.remove('on'));b.classList.add('on');$('#sel').textContent=`${p[0].toLocaleString()} diamonds · $${p[1]}`};return b}));
+$('#buy').onclick=()=>{if(sel===null)return toast('Select a pack first');S.gems+=packs[sel][0];gems();toast(`+${packs[sel][0].toLocaleString()} diamonds added`)};
+
+// leaderboard
+tabs($('#lbTabs'),Object.keys(lbData),k=>{$('#lb').innerHTML=lbData[k].map((r,i)=>`<div class="trow"><span class="n">${i+1}</span><b>${r[0]}</b><span>${r[1].toLocaleString()} pts</span><span class="${r[2][0]=='+'?'w':r[2][0]=='–'&&r[2].length>1?'l':'muted'}">${r[2]}</span></div>`).join('')});
+
+// rewards
+function rw(){const box=$('#rewardList');box.innerHTML='';rewards.forEach((r,i)=>{const got=S.claimed.includes(i);
+ const c=el(`<article class="card"><div class="logo" style="--c:#ffffff14;font-size:1.4rem">${r[2]}</div><h3 style="margin:14px 0 6px">${r[0]}</h3><p class="muted">${r[3]}</p><div class="foot" style="margin-top:16px"><b class="gem" style="color:var(--gold)">◆ ${r[1]}</b><button class="btn sm" ${got?'disabled':''}>${got?'Claimed':'Claim'}</button></div></article>`);
+ c.querySelector('button').onclick=()=>{if(S.gems<r[1])return toast('Not enough diamonds. Top up first.');S.gems-=r[1];S.claimed.push(i);gems();toast(`${r[0]} claimed`);rw()};box.append(c)})}
+rw();
+
+// badges
+$('#badgeList').innerHTML=badges.map(b=>`<div class="badge ${b[3]?'':'lock'}"><div class="ic">${b[2]}</div><h3>${b[0]}</h3><small>${b[1]}</small></div>`).join('');
+gems();
+</script>
+</body>
+</html>
